@@ -39,7 +39,7 @@ public class ReqresInTests {
                 .then()
                 .statusCode(200)
                 .log().body()
-                .body("data.avatar", is("https://reqres.in/img/faces/2-image.jpg"));
+                .body("data.avatar", notNullValue());
     }
 
     @Test
