@@ -1,12 +1,13 @@
+import com.sun.istack.NotNull;
 import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.hasItemInArray;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 
 
 public class ReqresInTests {
@@ -18,7 +19,7 @@ public class ReqresInTests {
     }
 
     @Test
-    @DisplayName("Successful List Users Response Test")
+    @DisplayName("Successful List Users Response")
     void successfulListUsersResponseTest() {
         given()
                 .when()
@@ -30,7 +31,7 @@ public class ReqresInTests {
     }
 
     @Test
-    @DisplayName("Successful Single User Response Test")
+    @DisplayName("Successful Single User Response")
     void successfulSingleUserResponseTest() {
         given()
                 .when()
@@ -48,7 +49,46 @@ public class ReqresInTests {
                 .when()
                 .get("users/23")
                 .then()
-                .statusCode(404);
+                .statusCode(404)
+                .log().body()
+                .body("token", nullValue());
+    }
+
+    @Test
+    @DisplayName("Successful registration")
+    void successfulRegistrationTest() {
+        String data = "{\n" +
+                "    \"email\": \"eve.holt@reqres.in\",\n" +
+                "    \"password\": \"pistol\"\n" +
+                "}";
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(data)
+                .post("/register")
+                .then()
+                .statusCode(200)
+                .log().body()
+                .body("token", notNullValue());
+
+    }
+
+    @Test
+    @DisplayName("Successful login")
+    void successfulLoginTest() {
+        String data = "{\n" +
+                "    \"email\": \"eve.holt@reqres.in\",\n" +
+                "    \"password\": \"cityslicka\"\n" +
+                "}";
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(data)
+                .post("/login")
+                .then()
+                .statusCode(200)
+                .log().body()
+                .body("token", notNullValue());
     }
 
 }
